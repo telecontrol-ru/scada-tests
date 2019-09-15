@@ -7,5 +7,5 @@ class BaseTest(TestCase):
 
   def setUp(self):
     with open("settings.yml") as f:
-        settings = yaml.load(f)
+        settings = yaml.load(f, Loader=yaml.CLoader)
     self.client = Client(**settings)
