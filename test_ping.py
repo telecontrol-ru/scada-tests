@@ -8,8 +8,16 @@ class PingTest(BaseTest):
     assert data_items == NodeId.DataItems
     assert data_items.browse_name == "DataItems"
 
-  def test_creates(self):
+  def test_data_items(self):
     data_items = self.client.node(NodeId.DataItems)
-    data_items_creates = data_items.targets(NodeId.Creates)
-    assert NodeId.DataGroupType in data_items_creates
-    assert NodeId.DataItemType in data_items_creates
+    creates = data_items.targets(NodeId.Creates)
+    assert NodeId.DataGroupType in creates
+    assert NodeId.DataItemType in creates
+
+  def test_data_group_type(self):
+    data_group_type = self.client.node(NodeId.DataGroupType)
+    assert data_group_type.node_id == NodeId.DataGroupType
+    assert data_group_type.browse_name == "DataGroupType"
+    creates = data_group_type.targets(NodeId.Creates)
+    assert NodeId.DataGroupType in creates
+    assert NodeId.DataItemType in creates

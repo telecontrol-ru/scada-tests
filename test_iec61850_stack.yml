@@ -1,0 +1,15 @@
+ClientDevice:
+  TypeDefinitionId: Iec61850DeviceType
+  ParentId: Devices
+  Properties:
+    Host: localhost
+    Port: 12345
+    Disabled: False
+
+ServerDevice:
+  TypeDefinitionId: Iec61850ServerType
+  ParentId: Devices
+  Properties:
+    Host: 0.0.0.0
+    Port: 12345
+    Disabled: False
