@@ -1,5 +1,0 @@
-INFO     Iec61850Test:scada_test.py:15 Connect to localhost as test
-INFO     Stack:scada_stack.py:22 Add nodes from test_iec61850_stack.yml
-INFO     Stack:scada_stack.py:32 Add node ClientDevice
-INFO     Stack:scada_stack.py:32 Add node ServerDevice
-INFO     Iec61850Test:test_iec61850.py:7 Wait for device connection
