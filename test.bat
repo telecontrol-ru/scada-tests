@@ -1,3 +1,3 @@
-set PYTHONPATH=scadapy\2.1;modules
+call parameters.bat
 
-pytest
+pytest %*

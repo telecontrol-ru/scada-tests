@@ -1,0 +1,3 @@
+AnalogItem:
+  TypeDefinitionId: AnalogItemType
+  ParentId: DataItems

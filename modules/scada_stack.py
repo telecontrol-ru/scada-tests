@@ -21,7 +21,7 @@ class Stack:
   def add_from_file(self, path):
     self.log.info(f"Add nodes from {path}")
     with open(path) as f:
-        stack_template = yaml.load(f, Loader=yaml.CLoader)
+        stack_template = yaml.load(f, Loader=yaml.FullLoader)
     self.add_from_template(stack_template)
 
   def add_from_template(self, stack_template):
