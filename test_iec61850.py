@@ -3,8 +3,11 @@ import unittest
 
 
 class Iec61850Test(BaseTest):
-  def test_basic(self):
+  def setUp(self):
+    super().setUp()
     self.stack.add_from_file("test_iec61850_stack.yml")
+
+  def test_basic(self):
     self.log.info("Wait for client device connection")
     self.stack.node("ClientDevice")["Online"].wait_for_value(True)
     client_device = self.stack.node("ServerDevice")
