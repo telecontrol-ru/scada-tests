@@ -20,13 +20,13 @@ jobs:
       id: scadapy
       shell: cmake -P {0} 
       run: |
-        set(scadapy_dir "scadapy-2.1")
+        set(SCADAPY_DIR "scadapy-2.1")
         file(DOWNLOAD "${{ secrets.SCADAPY_URL }}" ./scadapy.zip SHOW_PROGRESS)
         execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvf ./scadapy.zip)
 
         # Save the path for other steps
-        file(TO_CMAKE_PATH "$ENV{GITHUB_WORKSPACE}/${scadapy_dir}" cmake_dir)
-        message("::set-output name=scadapy_dir::${cmake_dir}")
+        file(TO_NATIVE_PATH "$ENV{GITHUB_WORKSPACE}/${SCADAPY_DIR}" SCADAPY_DIR)
+        message("::set-output name=scadapy_dir::${SCADAPY_DIR}")
 
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
