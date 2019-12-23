@@ -49,5 +49,5 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest
-        set PYTHONPATH=scadapy-2.1;modules
+        $env:PYTHONPATH = "scadapy-2.1;modules"
         pytest
