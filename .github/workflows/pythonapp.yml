@@ -48,10 +48,7 @@ jobs:
 
     - name: Test with pytest
       env:
-        SCADAPY_DIR: ${{ steps.scadapy.outputs.scadapy_dir }}
-        PYTHONPATH: modules;${{ steps.scadapy.outputs.scadapy_dir }}
+        PYTHONPATH: modules;scadapy-2.1
       run: |
         pip install pytest
-        dir ${SCADAPY_DIR}
-        echo ${PYTHONPATH}
         pytest
