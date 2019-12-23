@@ -51,4 +51,5 @@ jobs:
         PYTHONPATH: modules;${{ steps.scadapy.outputs.scadapy_dir }}
       run: |
         pip install pytest
+        dir ${{ steps.scadapy.outputs.scadapy_dir }}
         pytest
