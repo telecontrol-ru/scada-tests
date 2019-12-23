@@ -10,10 +10,23 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - shell: cmake -P {0} 
+    - name: Deploy SCADA
+      shell: cmake -P {0} 
       run: |
         file(DOWNLOAD "${{ secrets.SCADA_SETUP_URL }}" ./scada-setup.msi SHOW_PROGRESS)
-        execute_process(COMMAND msiexec /a ./scada-setup.msi /quiet /norestart)
+        execute_process(COMMAND msiexec /a scada-setup.msi /norestart /quiet)
+
+    - name: Deploy ScadaPy
+      id: scadapy
+      shell: cmake -P {0} 
+      run: |
+        set(scadapy_dir "scadapy-2.1")
+        file(DOWNLOAD "${{ secrets.SCADAPY_URL }}" ./scadapy.zip SHOW_PROGRESS)
+        execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvf ./scadapy.zip)
+
+        # Save the path for other steps
+        file(TO_CMAKE_PATH "$ENV{GITHUB_WORKSPACE}/${scadapy_dir}" cmake_dir)
+        message("::set-output name=scadapy_dir::${cmake_dir}")
 
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
@@ -36,4 +49,6 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest
+        set SCADAPY=${{ steps.scadapy.outputs.scadapy_dir }}
+        set PYTHONPATH=%PYTHONPATH%;%SCADAPY%;modules
         pytest
