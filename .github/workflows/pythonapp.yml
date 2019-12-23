@@ -28,11 +28,11 @@ jobs:
         file(TO_NATIVE_PATH "$ENV{GITHUB_WORKSPACE}/${SCADAPY_DIR}" SCADAPY_DIR)
         message("::set-output name=scadapy_dir::${SCADAPY_DIR}")
 
-    - name: Set up Python 3.7
+    - name: Set up Python 3.8 x86
       uses: actions/setup-python@v1
       with:
         architecture: 'x86'
-        python-version: 3.7
+        python-version: 3.8
 
     - name: Install dependencies
       run: |
