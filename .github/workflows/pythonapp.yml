@@ -50,4 +50,5 @@ jobs:
       run: |
         pip install pytest
         $env:PYTHONPATH = "scadapy-2.1;modules"
+        dir scadapy-2.1
         pytest
