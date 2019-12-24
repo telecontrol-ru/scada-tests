@@ -23,11 +23,11 @@ jobs:
         file(DOWNLOAD "${{ secrets.SCADAPY_URL }}" modules/scadapy.zip SHOW_PROGRESS)
         execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvf modules/scadapy.zip)
 
-    - name: Set up Python 3.7 x86
+    - name: Set up Python
       uses: actions/setup-python@v1
       with:
         architecture: 'x86'
-        python-version: 3.7
+        python-version: 3.8
 
     - name: Install dependencies
       run: |
