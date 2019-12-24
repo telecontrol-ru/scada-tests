@@ -14,7 +14,7 @@ jobs:
       shell: cmake -P {0} 
       run: |
         file(DOWNLOAD "${{ secrets.SCADA_SETUP_URL }}" ./scada-setup.msi SHOW_PROGRESS)
-        execute_process(COMMAND msiexec /a scada-setup.msi /norestart /quiet)
+        execute_process(COMMAND msiexec /i scada-setup.msi /norestart /quiet)
 
     - name: Deploy ScadaPy
       id: scadapy
@@ -51,5 +51,4 @@ jobs:
       run: |
         pip install pytest
         $env:PYTHONPATH = "scadapy-2.1;modules"
-        dir scadapy-2.1
         pytest
