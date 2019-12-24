@@ -20,13 +20,8 @@ jobs:
       id: scadapy
       shell: cmake -P {0} 
       run: |
-        set(SCADAPY_DIR "scadapy-2.1")
-        file(DOWNLOAD "${{ secrets.SCADAPY_URL }}" ./scadapy.zip SHOW_PROGRESS)
-        execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvf ./scadapy.zip)
-
-        # Save the path for other steps
-        file(TO_NATIVE_PATH "$ENV{GITHUB_WORKSPACE}/${SCADAPY_DIR}" SCADAPY_DIR)
-        message("::set-output name=scadapy_dir::${SCADAPY_DIR}")
+        file(DOWNLOAD "${{ secrets.SCADAPY_URL }}" modules/scadapy.zip SHOW_PROGRESS)
+        execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvf modules/scadapy.zip)
 
     - name: Set up Python 3.8 x86
       uses: actions/setup-python@v1
@@ -48,7 +43,8 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
     - name: Test with pytest
+      env:
+        PYTHONPATH: modules
       run: |
         pip install pytest
-        $env:PYTHONPATH = "scadapy-2.1;modules"
         pytest
