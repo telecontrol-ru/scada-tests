@@ -15,8 +15,11 @@ jobs:
       run: |
         file(DOWNLOAD "${{ secrets.SCADA_SETUP_URL }}" ./scada-setup.msi SHOW_PROGRESS)
         execute_process(COMMAND msiexec /i scada-setup.msi /norestart /quiet /Lv scada-setup.log)
-        file(READ ./scada-setup.log SCADA_SETUP_LOG)
-        message(${SCADA_SETUP_LOG})
+
+    - uses: actions/upload-artifact@v1
+      with:
+        name: scada-setup.log
+        path: scada-setup.log
 
     - name: Deploy ScadaPy
       id: scadapy
