@@ -14,7 +14,7 @@ jobs:
       shell: cmake -P {0} 
       run: |
         file(DOWNLOAD "${{ secrets.SCADA_SETUP_URL }}" ./scada-setup.msi SHOW_PROGRESS)
-        execute_process(COMMAND msiexec /i scada-setup.msi /norestart /quiet /Lv scada-setup.log)
+        execute_process(COMMAND msiexec /i scada-setup.msi /norestart /quiet /l*v! scada-setup.log)
 
     - uses: actions/upload-artifact@v1
       with:
