@@ -1,0 +1,8 @@
+ModbusMasterLink:
+  TypeDefinitionId: ModbusLink
+ModbusMasterDevice:
+  TypeDefinitionId: ModbusDevice
+ModbusSlaveLink:
+  TypeDefinitionId: ModbusLink
+ModbusSlaveDevice:
+  TypeDefinitionId: ModbusDevice
