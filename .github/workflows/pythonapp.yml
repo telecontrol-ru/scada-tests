@@ -8,31 +8,37 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4
 
-    - name: Deploy SCADA
-      shell: cmake -P {0} 
+    - name: Download SCADA installer
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: gh release download --repo alexsmn/scada-client --pattern "*.msi" --dir .
+
+    - name: Install SCADA
+      shell: pwsh
       run: |
-        file(DOWNLOAD "${{ secrets.SCADA_SETUP_URL }}" ./scada-setup.msi SHOW_PROGRESS)
-        execute_process(COMMAND msiexec /i scada-setup.msi /norestart /quiet /l*v! scada-setup.log)
+        $msi = (Get-ChildItem -Filter "*.msi")[0]
+        Write-Host "Installing $($msi.Name)"
+        Start-Process msiexec -ArgumentList "/i", $msi.FullName, "/norestart", "/quiet", "/l*v!", "scada-setup.log" -Wait -NoNewWindow
 
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v4
+      if: always()
       with:
         name: scada-setup.log
         path: scada-setup.log
 
     - name: Deploy ScadaPy
-      id: scadapy
-      shell: cmake -P {0} 
+      shell: cmake -P {0}
       run: |
         file(DOWNLOAD "${{ secrets.SCADAPY_URL }}" modules/scadapy.zip SHOW_PROGRESS)
         execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvf modules/scadapy.zip)
 
     - name: Set up Python
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v5
       with:
         architecture: 'x86'
-        python-version: 3.8
+        python-version: '3.8'
 
     - name: Install dependencies
       run: |
@@ -52,4 +58,21 @@ jobs:
         PYTHONPATH: modules
       run: |
         pip install pytest
-        pytest
+        pytest --junitxml=test-results.xml
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: |
+          test-results.xml
+          logs/test.log
+
+    - name: Publish test results
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Test Results
+        path: test-results.xml
+        reporter: java-junit
