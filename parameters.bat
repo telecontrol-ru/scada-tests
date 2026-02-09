@@ -1,2 +1,1 @@
-set SCADAPY=d:\TC\builds\scadapy\2.1
-set PYTHONPATH=%SCADAPY%;modules
+set PYTHONPATH=C:\Program Files (x86)\Telecontrol SCADA\python;modules

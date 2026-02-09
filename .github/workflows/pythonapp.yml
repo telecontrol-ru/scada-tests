@@ -28,17 +28,11 @@ jobs:
         name: scada-setup.log
         path: scada-setup.log
 
-    - name: Deploy ScadaPy
-      shell: cmake -P {0}
-      run: |
-        file(DOWNLOAD "${{ secrets.SCADAPY_URL }}" modules/scadapy.zip SHOW_PROGRESS)
-        execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvf modules/scadapy.zip)
-
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         architecture: 'x86'
-        python-version: '3.8'
+        python-version: '3.12'
 
     - name: Install dependencies
       run: |
@@ -55,7 +49,7 @@ jobs:
 
     - name: Test with pytest
       env:
-        PYTHONPATH: modules
+        PYTHONPATH: C:\Program Files (x86)\Telecontrol SCADA\python;modules
       run: |
         pip install pytest
         pytest --junitxml=test-results.xml
