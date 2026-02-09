@@ -28,9 +28,6 @@ jobs:
         name: scada-setup.log
         path: scada-setup.log
 
-    - name: Start SCADA Server
-      run: net start TelecontrolScadaServer
-
     - name: Deploy ScadaPy
       shell: cmake -P {0}
       run: |
