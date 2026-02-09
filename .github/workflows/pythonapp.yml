@@ -51,6 +51,7 @@ jobs:
       env:
         PYTHONPATH: C:\Program Files (x86)\Telecontrol SCADA\python;modules
       run: |
+        set "PATH=C:\Program Files (x86)\Telecontrol SCADA\bin;%PATH%"
         pip install pytest
         pytest --junitxml=test-results.xml
 
