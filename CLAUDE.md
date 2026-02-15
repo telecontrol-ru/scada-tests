@@ -67,6 +67,17 @@ NodeName:
 | `test_modbus.py` | `test_modbus_stack.yml` | Modbus device protocol |
 | `test_iec61850.py` | `test_iec61850_stack.yml` | IEC 61850 client/server device connectivity |
 
+## Git Workflow
+
+Always create changes on a feature branch and open a GitHub PR — never commit directly to `master`.
+
+```bash
+git checkout -b my-feature
+# ... make changes ...
+git push -u origin my-feature
+gh pr create --base master
+```
+
 ## CI
 
 GitHub Actions workflow (`.github/workflows/pythonapp.yml`) installs SCADA via MSI, deploys scadapy, lints with flake8, and runs pytest on `windows-latest`.
