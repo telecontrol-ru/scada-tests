@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Python/pytest integration test suite for the Telecontrol SCADA server. Tests exercise the server through `scadapy`, a 32-bit CPython C extension (`.pyd`) that wraps the SCADA client API. A running SCADA server with a `test` account is required.
+Python/pytest integration test suite for the Telecontrol SCADA server. Tests exercise the server through `scadapy`, a 32-bit CPython C extension (`.pyd`) that wraps the SCADA client API. A running SCADA server is required.
 
 ## Running Tests
 
@@ -14,12 +14,12 @@ test.bat -k DataItems        # Run tests matching pattern
 test.bat -k "not Iec61850"   # Exclude tests matching pattern
 ```
 
-`test.bat` sources `parameters.bat` (sets `SCADAPY` path and `PYTHONPATH`) then invokes `pytest`. Edit `parameters.bat` to point `SCADAPY` at your local scadapy build.
+`test.bat` sources `parameters.bat` (sets `PYTHONPATH`) then invokes `pytest`. Edit `parameters.bat` to point at your local scadapy installation.
 
 Alternatively, set `PYTHONPATH` manually and run pytest directly:
 
 ```batch
-set PYTHONPATH=d:\TC\builds\scadapy\2.1;modules
+set PYTHONPATH=C:\Program Files (x86)\Telecontrol SCADA\python;modules
 pytest -k DataItems
 ```
 
@@ -27,16 +27,28 @@ pytest is configured in `pytest.ini` with a 10-second timeout per test and log o
 
 ## Prerequisites
 
-- Python 3.8 (32-bit) with `pytest` and `pyyaml` (`pip install -r requirements.txt`)
-- `scadapy` module: `scadapy.cp38-win32.pyd` plus required DLLs deployed to `modules/` or available via `PYTHONPATH`
-- Running SCADA server on `localhost` (configurable in `settings.yml`) with a `test` user account
+- Python 3.12+ (32-bit) with `pytest` and `pyyaml` (`pip install -r requirements.txt`)
+- `scadapy` module available via `PYTHONPATH` (installed with SCADA or built locally)
+- Running SCADA server on `localhost` (configurable in `settings.yml`)
+
+## Configuration
+
+Server connection settings are in `settings.yml`:
+
+```yaml
+server: localhost
+user_name: root
+password: ""
+```
+
+DLL loading is handled automatically by `conftest.py`, which adds the SCADA installation directory to the DLL search path on Windows.
 
 ## Architecture
 
 ### Test Framework
 
 - **`modules/scada_test.py`** (`BaseTest`) — Base test class. `setUp` reads `settings.yml`, connects a `scadapy.Client` to the server, and creates a `Stack`. `tearDown` deletes all nodes created by the stack and disconnects.
-- **`modules/scada_stack.py`** (`Stack`) — Creates OPC UA nodes from YAML templates via the scadapy client API. Each node definition specifies `TypeDefinitionId`, optional `ParentId`, `BrowseName`, `DisplayName`, and `Properties`. Nodes are tracked by name and deleted on teardown.
+- **`modules/scada_stack.py`** (`Stack`) — Creates OPC UA nodes from YAML templates via the scadapy client API. Each node definition specifies `TypeDefinitionId`, `ParentId`, `BrowseName`, `DisplayName`, and `Properties`. Nodes are tracked by name and deleted on teardown.
 
 ### Test Pattern
 
@@ -50,7 +62,7 @@ Each test file follows the same pattern:
 ```yaml
 NodeName:
   TypeDefinitionId: SomeType      # Required: scadapy.NodeId enum member
-  ParentId: DataItems             # Optional: scadapy.NodeId enum member (default varies)
+  ParentId: DataItems             # Required: scadapy.NodeId enum member
   BrowseName: "Name"              # Optional
   DisplayName: "Display Name"     # Optional
   Properties:                     # Optional: set after node creation
@@ -67,17 +79,12 @@ NodeName:
 | `test_modbus.py` | `test_modbus_stack.yml` | Modbus device protocol |
 | `test_iec61850.py` | `test_iec61850_stack.yml` | IEC 61850 client/server device connectivity |
 
-## Git Workflow
-
-Always create changes on a feature branch and open a GitHub PR — never commit directly to `master`.
-
-```bash
-git checkout -b my-feature
-# ... make changes ...
-git push -u origin my-feature
-gh pr create --base master
-```
-
 ## CI
 
-GitHub Actions workflow (`.github/workflows/pythonapp.yml`) installs SCADA via MSI, deploys scadapy, lints with flake8, and runs pytest on `windows-latest`.
+GitHub Actions workflow (`.github/workflows/pythonapp.yml`):
+- Triggers on push
+- Installs SCADA from MSI release (`alexsmn/scada-client`)
+- Sets up Python 3.12 (x86)
+- Lints with flake8
+- Runs pytest with JUnit XML output
+- Publishes test results via `dorny/test-reporter`
